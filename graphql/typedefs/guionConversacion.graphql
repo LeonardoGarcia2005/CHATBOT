@@ -1,0 +1,28 @@
+# Types
+
+type GuionConversacion { 
+  id: ID!
+  nombre_guion: String!
+  empresa: Empresa
+  canales: [Canal]
+  asignacion_automatica_operadores: String
+  #criterio_asignacion_usuarios: CriterioAsignacionUsuarios
+  tiempo_limite_sesion: Int
+  ramas_distintas_cliente_no_cliente: Boolean
+  fase_conversacion_raiz: FaseConversacion
+  condicion_entrada_para_abortar: CondicionEntrada
+  
+  # Interface required
+  fecha_hora_registro: miTimestamp!
+  fecha_hora_actualizacion: miTimestamp
+  registro_esta_activo: Boolean!
+}
+
+# Inputs
+input GuionConversacionCreateInput {
+  nombre_guion: String!
+}
+
+input GuionConversacionUpdateInput {
+  nombre_guion: String
+}

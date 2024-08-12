@@ -1,0 +1,78 @@
+# Custom Scalars
+scalar JSON
+scalar miTimestamp
+
+type Query {
+  # AccionARealizar
+  #consultarAccionesARealizar(condicion_entrada_id: ID!): [AccionARealizar]
+
+  # Canal
+  canales: [Canal]!
+  canal(id: ID!): Canal
+
+  # ClienteCanal
+  consultarClienteCanalPorIdentificador(identificador_cliente: String, canal_id: ID!): ClienteCanal
+  consultarClienteCanal(cliente_canal_id: ID!): ClienteCanal
+
+  # CondicionEntrada
+  consultarCondicionEntradaPorFase(fase_conversacion_id: ID!, secuencia_dentro_de_fase: Int!): CondicionEntrada
+  esCondicionEntradaValida(fase_conversacion_id: ID!, secuencia_dentro_de_fase: Int!, entrada_de_cliente: String): Boolean
+
+  # Conversacion
+  conversaciones: [Conversacion]!
+  conversacion(id: ID!): Conversacion
+
+  # Empresas
+  empresas: [Empresa]!
+  empresa(id: ID!): Empresa
+
+  # FaseConversacion
+  fasesConversacionHastaNivel1(guion_conversacion_id: ID!): FaseConversacion
+  
+  # FaseInteraccion
+  fasesInteraccion: [FaseInteraccion]!
+  faseInteraccion(id: ID!): FaseInteraccion
+
+  # GuionConversacion
+  guionesConversacion: [GuionConversacion!]
+  consultarGuion_CrearConversacion(id: ID!): GuionConversacion
+
+  # Invocador de servicios API
+  invocarServicioAPI: JSON
+
+  # Usuario
+  getTokenAccesoPublico: UsuarioConToken
+
+}
+
+type Mutation {
+  # Canales
+  crearCanal(canal: CanalCreateInput!): Canal!
+  actualizarCanal(id: ID!, canal: CanalUpdateInput!): Canal!
+
+  # ClienteChatbot
+  insertaClienteCanal(clienteCanalCreateInput: ClienteCanalCreateInput!): ClienteCanal
+
+  # Conversacion
+  crearConversacion(conversacionCreateInput: ConversacionCreateInput!, guionConversacionId: ID!): Conversacion!
+  crearConversacionCompleta(conversacionCreateInput: ConversacionCreateInput!, faseInteraccionCreateInput: FaseInteraccionCreateInput!, guionConversacionId: ID!): Conversacion!
+  crearNuevaConversacion(conversacionCreateInput: ConversacionCreateInput!,identificadorCliente: String): Conversacion!
+  continuarConversacion(conversacionUpdateInput: ConversacionUpdateInput!): Conversacion
+
+  # Empresas
+  crearEmpresa(book: EmpresaCreateInput!): Empresa!
+  actualizarEmpresa(id: ID!, book: EmpresaUpdateInput!): Empresa!
+
+  # FaseInteraccion
+  crearFaseInteraccion(faseInteraccionCreateInput: FaseInteraccionCreateInput!, conversacionId: ID!): FaseInteraccion!
+  actualizarFaseInteraccion(id: ID!, faseInteraccionUpdateInput: FaseInteraccionUpdateInput!): FaseInteraccion!
+  asociarFaseInteraccionAConversacion(id: ID!, conversacionId: ID!): FaseInteraccion! 
+
+  # Guiones Conversacion
+  crearGuionConversacion(guionConversacionCreateInput: GuionConversacionCreateInput!): GuionConversacion!
+  actualizarGuionConversacion(id: ID!, guionConversacionUpdateInput: GuionConversacionUpdateInput!): GuionConversacion!
+  #asociarGuionAEmpresa(id: ID!, empresa: ID!): GuionConversacion! 
+
+  # Usuario
+  loginUsuario(loginInput: LoginInput): UsuarioConToken
+} 

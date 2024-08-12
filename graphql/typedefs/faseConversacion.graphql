@@ -1,0 +1,33 @@
+# Types
+
+type FaseConversacion { 
+  id: ID!
+  guion_conversacion_id: ID!
+  nombre_fase: String
+  nivel_nodo: Int
+  fase_padre_id: Int
+  mensaje_de_fase: String
+  mensaje_entrada_invalida: String
+  tiempo_limite_sesion: Int
+  es_de_operador: Boolean
+  area_empresa_id: ID
+  es_fase_inicial_cliente: Boolean
+  fecha_hora_registro: miTimestamp!
+  fecha_hora_actualizacion: miTimestamp
+  registro_esta_activo: Boolean!
+  fases_hijas: [FaseConversacion!]
+}
+
+# Inputs
+input FaseConversacionCreateInput {
+  secuencia_en_conversacion: Int
+  fecha_hora_mensaje_tarea_mostrado: miTimestamp
+  registro_esta_activo: Boolean!
+}
+
+input FaseConversacionUpdateInput {
+  secuencia_en_conversacion: Int
+  fecha_hora_mensaje_tarea_mostrado: miTimestamp
+  fecha_hora_condicion_entrada_recibida: miTimestamp
+  registro_esta_activo: Boolean!
+}

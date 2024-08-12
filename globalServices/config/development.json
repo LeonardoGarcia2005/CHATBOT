@@ -1,0 +1,33 @@
+{
+  "services": {
+    "host": "localhost",
+    "port": 4000
+  },
+  "db": {
+    "host": "localhost",
+    "port": 5432,
+    "name": "CHATGEA_DEV",
+    "user": "postgres",
+    "password": "leo2005"
+  },
+  "pgPromise": {
+    "ssl": false,
+    "max": 2,
+    "idleTimeoutMillis": 30000,
+    "connectionTimeoutMillis": 6000,
+    "maxUses": 7500
+  },
+  "maxLogLevel": "debug",
+  "messengerAPI": {
+    "apiDomain": "https://graph.facebook.com",
+    "apiVersion": "v11.0",
+    "activate": false
+  },
+  "pageAppForMessenger": {
+    "pageId": 107975295725722,
+    "appId": 327630493031641,
+    "pageAccesToken": "EAAEpZBmsnnNkBO4x6AZCfncUZCsSqweKixSgOqx3QopQ3ShkAZBZAPRAaNR0JGa6WHaBR1wxfYDqRCVt1vvKNaW5ZBlewWCGVi5uwjiC8z7JKnyoyrMfnt27QFu0s32vJ66ofkULrUmCMlEzLYFKKRNTy0AiV4e3myFFrtBWEAczP92OnqkPbGy2GmBNk8uNXYax2ZC",
+    "appSecret": "7ba6d6dd213d0e5fd5afb2e9d5ab1466",
+    "verifyToken": "BusinessFirstOne"
+  }
+}

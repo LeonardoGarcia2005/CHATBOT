@@ -1,0 +1,20 @@
+# Types
+type ClienteCanal { 
+  id: ID!
+  cliente_chatbot: ClienteChatbot
+  canal: Canal!
+  identificador_cliente_en_canal: String
+  fecha_hora_registro_cliente: miTimestamp
+  fecha_hora_baja_cliente_en_canal: miTimestamp
+  fecha_hora_primera_conversacion: miTimestamp
+  registro_esta_activo: Boolean
+}
+
+# Inputs
+input ClienteCanalCreateInput {
+  canal_id: ID!
+  identificador_cliente_en_canal: String
+}
+
+#input ClienteCanalUpdateInput {
+#}

@@ -1,0 +1,23 @@
+# Types
+type ClienteChatbot { 
+  id: ID!
+  identificador_principal_cliente: String!
+  tipo_identificador_id: ID!
+  nombre1: String!
+  nombre2: String
+  apellido1: String!
+  apellido2: String
+  correo: String
+  fecha_nacimiento: miTimestamp
+  fecha_hora_primer_registro: miTimestamp
+  fecha_hora_ultima_conversacion: miTimestamp
+  fecha_hora_actualizacion: miTimestamp
+  registro_esta_activo: Boolean
+}
+
+# Inputs
+#input ClienteChatbotCreateInput {
+#}
+
+#input ClienteChatbotUpdateInput {
+#}

@@ -1,0 +1,23 @@
+# Types
+
+type MensajeEmitido { 
+  id: ID!
+  conversacion_id: ID!
+  mensaje_emitido: String
+  nombre_emisor_del_mensaje: String
+  emisor_del_mensaje_id: Int
+  secuencia_del_mensaje: Int
+  fase_interaccion_id: ID!
+  fecha_hora_registro: miTimestamp!
+  registro_esta_activo: Boolean!
+}
+
+# Inputs
+input MensajeEmitidoCreateInput {
+  conversacion_id: ID!
+  mensaje_emitido: String
+  nombre_emisor_del_mensaje: String
+  emisor_del_mensaje_id: Int
+  fase_interaccion_id: ID!
+}
+

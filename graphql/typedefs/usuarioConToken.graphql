@@ -1,0 +1,9 @@
+# Types
+type UsuarioConToken { 
+  id: ID!
+  nombre_usuario: String!
+  tokenJWT: String!
+}
+
+
+

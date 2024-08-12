@@ -1,0 +1,30 @@
+# Types
+
+type Conversacion { 
+  id: ID!
+  guion_conversacion: GuionConversacion
+  ultima_fase_conversacion: FaseConversacion!
+  fecha_hora_inicio_conversacion: miTimestamp
+  fecha_hora_fin_conversacion: miTimestamp
+  tomada_por_operador: Boolean
+  cliente_canal: ClienteCanal
+  fases_interaccion: [FaseInteraccion!]
+  registro_esta_activo: Boolean
+  tokenJWTUsuarioAutenticado: String
+}
+
+# Inputs
+input ConversacionCreateInput {
+  guion_conversacion_id: ID!
+  tomada_por_operador: Boolean
+  canal_id: ID!
+  identificador_cliente_en_canal: String
+  fases_interaccion: [FaseInteraccionCreateInput!]
+}
+
+input ConversacionUpdateInput {
+  entrada_de_cliente: String! 
+  fase_conversacion_id: ID 
+  conversacion_id: ID
+  #tomada_por_operador: Boolean
+}

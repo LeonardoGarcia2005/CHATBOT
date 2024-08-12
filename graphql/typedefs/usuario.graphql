@@ -1,0 +1,23 @@
+# Types
+type Usuario implements Timestamps { 
+  id: ID!
+  nombre_usuario: String!
+  clave: String
+  
+  # Interface required
+  fecha_hora_registro: miTimestamp!
+  fecha_hora_actualizacion: miTimestamp
+}
+
+# Inputs
+input UsuarioCreateInput {
+  nombre_usuario: String!
+  clave: String!
+  nombre_rol: String!
+}
+
+input LoginInput {
+  nombre_usuario: String!
+  clave: String!
+}
+

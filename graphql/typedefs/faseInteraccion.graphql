@@ -1,0 +1,32 @@
+# Types
+
+type FaseInteraccion { 
+  id: ID!
+  conversacion_id: Int!
+  fase_conversacion: FaseConversacion
+  guion_canal_id: Int
+  secuencia_en_conversacion: Int
+  fecha_hora_mensaje_tarea_mostrado: miTimestamp
+  condicion_entrada_recibida_id: Int
+  fecha_hora_condicion_entrada_recibida: miTimestamp
+  registro_esta_activo: Boolean!
+}
+
+# Inputs
+input FaseInteraccionCreateInput {
+  id: ID
+  fase_conversacion_id: Int
+  mensaje_fase_conversacion: String
+  conversacion_id: Int
+  #secuencia_en_conversacion: Int
+  mensaje_emitido_input: MensajeEmitidoCreateInput
+  #fecha_hora_mensaje_tarea_mostrado: miTimestamp
+  #registro_esta_activo: Boolean!
+}
+
+input FaseInteraccionUpdateInput {
+  secuencia_en_conversacion: Int
+  fecha_hora_mensaje_tarea_mostrado: miTimestamp
+  fecha_hora_condicion_entrada_recibida: miTimestamp
+  registro_esta_activo: Boolean!
+}

@@ -1,0 +1,25 @@
+# Types
+type CondicionEntrada { 
+  id: ID!
+  fase_conversacion_id: Int!
+  secuencia_dentro_de_fase: Int!
+  tipo_mensaje_entrada_id: Int
+  expresion_regular_activadora: String
+  valor_dato_constante: String
+  formato_de_valor_entrada: String
+  palabras_clave_reconocer: String
+  es_entrada_repetitiva: Boolean!
+  guion_conversacion_id: Int
+  es_entrada_para_abortar: Boolean
+  proxima_fase_conversacion_id: ID!
+  fecha_hora_registro: miTimestamp!
+  fecha_hora_actualizacion: miTimestamp
+  registro_esta_activo: Boolean
+}
+
+# Inputs
+input CondicionEntradaInput {
+  fase_conversacion_id: Int!
+  secuencia_dentro_de_fase: Int!
+}
+

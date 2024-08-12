@@ -1,0 +1,18 @@
+# Types
+type Canal { 
+  id: ID!
+  nombre_canal: String!
+  admite_identificador_cliente_null: Boolean!
+  fecha_hora_registro: miTimestamp!
+  fecha_hora_actualizacion: miTimestamp
+  registro_esta_activo: Boolean
+}
+
+# Inputs
+input CanalCreateInput {
+  nombre_canal: String!
+}
+
+input CanalUpdateInput {
+  nombre_canal: String
+}

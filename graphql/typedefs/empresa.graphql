@@ -1,0 +1,20 @@
+# Types
+type Empresa implements Timestamps { 
+  id: ID!
+  nombre_empresa: String!
+  uid: String
+  
+  # Interface required
+  fecha_hora_registro: miTimestamp!
+  fecha_hora_actualizacion: miTimestamp
+}
+
+# Inputs
+input EmpresaCreateInput {
+  nombre_empresa: String!
+  #guion_conversacion: ID!
+}
+
+input EmpresaUpdateInput {
+  nombre_empresa: String
+}
