@@ -33,7 +33,12 @@ const consultarSesion = async (phoneNumberUser) => {
   }
 }
 
-const insertarSesionEnBD = async (phoneNumberUser, dateWhatsapp) => {
+const insertarSesionEnBD = async (
+  phoneNumberUser,
+  dateWhatsapp,
+  sesionJSON
+) => {
+  loggerGlobal.info("sesion JSON: " + sesionJSON)
   try {
     // Si dateWhatsapp es un objeto Date, conviértelo a una cadena ISO 8601
     const formattedDate =
@@ -48,6 +53,7 @@ const insertarSesionEnBD = async (phoneNumberUser, dateWhatsapp) => {
         identificador_cliente_en_canal: phoneNumberUser,
         registro_esta_activo: true,
         estado: true,
+        sesion_data: sesionJSON,
       },
     ]
 
@@ -60,6 +66,7 @@ const insertarSesionEnBD = async (phoneNumberUser, dateWhatsapp) => {
         'identificador_cliente_en_canal',
         'registro_esta_activo',
         'estado',
+        'sesion_data'
       ],
       { table: 'sesion' }
     )
@@ -71,7 +78,7 @@ const insertarSesionEnBD = async (phoneNumberUser, dateWhatsapp) => {
     const result = await dbConnectionProvider.oneOrNone(query)
     return result
   } catch (error) {
-    loggerGlobal.error('Error al insertar sesión en BD:', error)
+    loggerGlobal.error('Error al insertar sesión en BD:' + error.message)
     throw FabricaErrores.crearError(
       FabricaErrores.TipoError.ErrorBaseDatos,
       'Error al insertar sesión en la base de datos'
@@ -104,7 +111,7 @@ const marcarSesionesInactivas = async () => {
       // Verificar si la sesión ha estado inactiva por más de 3600 segundos es decir una hora
       if (diferenciaEnSegundos > 3600) {
         // Actualizar el estado de la sesión a inactivo
-          await dbConnectionProvider.oneOrNone(
+        await dbConnectionProvider.oneOrNone(
           `
           UPDATE sesion
           SET fecha_hora_finaliza_sesion = $1,
@@ -119,7 +126,9 @@ const marcarSesionesInactivas = async () => {
       }
     }
   } catch (error) {
-    loggerGlobal.error('Error al marcar sesiones como inactivas:', error)
+    loggerGlobal.error(
+      'Error al marcar sesiones como inactivas: ' + error.message
+    )
     throw FabricaErrores.crearError(
       FabricaErrores.TipoError.ErrorBaseDatos,
       'Error al marcar sesiones como inactivas en la base de datos'
@@ -135,11 +144,11 @@ const sesionClienteDAO = {
 export { sesionClienteDAO }
 
 // Tarea programada para que se ejecute cada 5 minutos y evaluar si debemos pasar la sesion a activa o inactiva
-cron.schedule('*/1 * * * *', () => {
+cron.schedule('*/5 * * * *', () => {
   marcarSesionesInactivas().catch((error) => {
     loggerGlobal.error(
-      'Error en la ejecución de la tarea cron para marcarSesionesInactivas:',
-      error
+      'Error en la ejecución de la tarea cron para marcarSesionesInactivas:' +
+        error.message
     )
   })
 })

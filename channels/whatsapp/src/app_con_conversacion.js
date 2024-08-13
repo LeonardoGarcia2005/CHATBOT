@@ -7,127 +7,6 @@ import { loggerGlobal } from '../../../globalServices/logging/loggerManager.js'
 import express from 'express'
 import axios from 'axios'
 
-// Función para obtener una respuesta del servicio de conversación
-async function getResponseFromTalking(received_message, phoneNumberUser) {
-  if (!received_message) return null
-
-  loggerGlobal.debug('Voy a invocar los servicios de conversación...')
-
-  const query = {
-    mutation: `
-      mutation CrearNuevaConversacion($conversacionCreateInput: ConversacionCreateInput!) {
-        crearNuevaConversacion(conversacionCreateInput: $conversacionCreateInput) {
-          ultima_fase_conversacion {
-            id
-            nombre_fase
-            mensaje_de_fase
-          }
-        }
-      }
-    `,
-  }
-
-  loggerGlobal.debug('El query es: ' + query.mutation)
-
-  const respuestaSistema = await fetch('http://localhost:4000/graphql', {
-    method: 'POST',
-    body: JSON.stringify({
-      query: query.mutation,
-      variables: {
-        conversacionCreateInput: {
-          guion_conversacion_id: '2',
-          tomada_por_operador: false,
-          canal_id: '3', // 3 es el canal de whatsapp
-          identificador_cliente_en_canal: phoneNumberUser,
-        },
-      },
-    }),
-    headers: { 'Content-type': 'application/json' },
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      loggerGlobal.debug('Obtuve respuesta al invocar servicio...')
-      loggerGlobal.debug(json)
-      return json
-    })
-    .catch((error) => {
-      loggerGlobal.error(error)
-    })
-
-  console.log('getResponseFromTalking', respuestaSistema)
-
-  return respuestaSistema
-}
-
-// Función para enviar mensajes usando la API de WhatsApp de Meta
-async function sendMessage(to, text, buttons = []) {
-  const jwtToken = configurationProvider.pageAppForWhatsapp.jwtToken
-  const url = 'https://graph.facebook.com/v20.0/105860479205162/messages' // URL de la API de WhatsApp
-  const headers = {
-    Authorization: `Bearer ${jwtToken}`,
-    'Content-Type': 'application/json',
-  }
-
-  let body = {
-    messaging_product: 'whatsapp',
-    to: to,
-    type: 'text',
-    text: { body: text },
-  }
-
-  if (buttons.length > 0) {
-    body.type = 'interactive'
-    body.interactive = {
-      type: 'button',
-      body: { text: text },
-      action: {
-        buttons: buttons.map((button) => ({
-          type: 'reply',
-          reply: { id: button.id, title: button.body },
-        })),
-      },
-    }
-  }
-
-  try {
-    await axios.post(url, body, { headers })
-  } catch (error) {
-    console.error('Error sending message:', error)
-  }
-}
-
-// Función para manejar los mensajes entrantes
-async function handleMessage(phoneNumberUser, message) {
-  if (!message || (!message.text && !message.interactive)) {
-    loggerGlobal.error('Mensaje recibido en un formato inesperado:', message)
-    await sendMessage(
-      phoneNumberUser,
-      'Lo siento, no pude procesar tu mensaje. ¿Puedes intentarlo de nuevo?'
-    )
-    return
-  }
-
-  if (message.text && message.text.body) {
-    const messageBody = message.text.body.toLowerCase()
-    await sendMessage(phoneNumberUser, `Recibido: ${messageBody}`)
-
-    // Iniciar la conversación
-    const respuestaSistema = await getResponseFromTalking(
-      messageBody,
-      phoneNumberUser
-    )
-    if (respuestaSistema) {
-      const mensajeDeFase =
-        respuestaSistema.data.crearNuevaConversacion.ultima_fase_conversacion
-          .mensaje_de_fase
-      await sendMessage(phoneNumberUser, mensajeDeFase)
-    } else {
-      await sendMessage(phoneNumberUser, 'No pude obtener una respuesta.')
-    }
-  }
-}
-
-// Función principal para configurar y manejar el webhook de WhatsApp
 async function manejadorWhatsapp(app) {
   // Configurar middleware de Express para manejar JSON y datos de formulario
   app.use(express.json())
@@ -174,10 +53,10 @@ async function manejadorWhatsapp(app) {
   // Ruta para recibir y procesar mensajes entrantes del cliente
   app.post('/webhook', async (req, res) => {
     try {
-      // Se va desestructurando las propiedades del mensaje que envía el usuario desde Meta con todas sus propiedades
-      const entry = req.body.entry[0]
-      const changes = entry.changes[0]
-      const value = changes.value
+      //Se va desestrucutrando las propiedades del mensaje que envia el usuario desde meta con todas sus propiedades
+      const entry = req.body?.entry[0]
+      const changes = entry?.changes[0]
+      const value = changes?.value
 
       // Verifica si el evento contiene un mensaje
       if (value.messages && value.messages[0]) {
@@ -196,7 +75,7 @@ async function manejadorWhatsapp(app) {
           )
           await sesionCliente.insertarSesion(phoneNumberUser, date)
         } else {
-          loggerGlobal.info('Sesión encontrada:', sesion)
+          loggerGlobal.info('Sesión encontrada: ' + JSON.stringify(sesion))
         }
         // Procesa el mensaje recibido
         await handleMessage(phoneNumberUser, message)
@@ -213,6 +92,60 @@ async function manejadorWhatsapp(app) {
     }
     res.sendStatus(200)
   })
+
+  // Función para manejar los mensajes entrantes
+  async function handleMessage(phoneNumberUser, message) {
+    if (!message || (!message.text && !message.interactive)) {
+      loggerGlobal.error('Mensaje recibido en un formato inesperado:', message)
+      await sendMessage(
+        phoneNumberUser,
+        'Lo siento, no pude procesar tu mensaje. ¿Puedes intentarlo de nuevo?'
+      )
+      return
+    }
+
+    if (message.text && message.text.body) {
+      const messageBody = message.text.body.toLowerCase()
+      await sendMessage(phoneNumberUser, `Recibido: ${messageBody}`)
+    }
+  }
+
+  // Función para enviar mensajes usando la API de WhatsApp de Meta
+  async function sendMessage(to, text, buttons = []) {
+    const jwtToken = configurationProvider.pageAppForWhatsapp.jwtToken
+    const url = `https://graph.facebook.com/v20.0/105860479205162/messages` // URL de la API de WhatsApp
+    const headers = {
+      Authorization: `Bearer ${jwtToken}`,
+      'Content-Type': 'application/json',
+    }
+
+    let body = {
+      messaging_product: 'whatsapp',
+      to: to,
+      type: 'text',
+      text: { body: text },
+    }
+
+    if (buttons.length > 0) {
+      body.type = 'interactive'
+      body.interactive = {
+        type: 'button',
+        body: { text: text },
+        action: {
+          buttons: buttons.map((button) => ({
+            type: 'reply',
+            reply: { id: button.id, title: button.body },
+          })),
+        },
+      }
+    }
+
+    try {
+      await axios.post(url, body, { headers })
+    } catch (error) {
+      console.error('Error sending message:', error)
+    }
+  }
 
   // Iniciar el servidor HTTP
   httpServer(app)
